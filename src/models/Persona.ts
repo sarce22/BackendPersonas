@@ -106,7 +106,7 @@ export class PersonaModel {
   /**
    * Buscar persona por correo (sin contraseña)
    */
-  static async findByEmail(correo: string): Promise<IPersona | null> {
+  static async findByCorreo(correo: string): Promise<IPersona | null> {
     const [rows] = await pool.execute<RowDataPacket[]>(
       `SELECT p.id, p.nombre, p.apellido, p.correo, p.rol_id, 
               p.created_at, p.updated_at, r.nombre as rol_nombre
@@ -124,7 +124,7 @@ export class PersonaModel {
   /**
    * Buscar persona por correo CON contraseña (para login)
    */
-  static async findByEmailWithPassword(correo: string): Promise<IPersona | null> {
+  static async findByCorreoWithContraseña(correo: string): Promise<IPersona | null> {
     const [rows] = await pool.execute<RowDataPacket[]>(
       `SELECT p.*, r.nombre as rol_nombre
        FROM personas p 
@@ -221,7 +221,7 @@ export class PersonaModel {
   /**
    * Verificar si existe una persona con el correo
    */
-  static async emailExists(correo: string, excludeId?: number): Promise<boolean> {
+  static async CorreoExists(correo: string, excludeId?: number): Promise<boolean> {
     let query = 'SELECT COUNT(*) as count FROM personas WHERE correo = ?';
     const params: any[] = [correo];
     

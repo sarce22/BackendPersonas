@@ -13,7 +13,7 @@ export class PersonaController {
       const personaData: CreatePersonaInput = req.body;
 
       // Verificar si el correo ya existe
-      const existingPersona = await PersonaModel.emailExists(personaData.correo);
+      const existingPersona = await PersonaModel.CorreoExists(personaData.correo);
       if (existingPersona) {
         throw new AppError('Ya existe una persona con este correo', 409);
       }
@@ -50,7 +50,7 @@ export class PersonaController {
       const { correo, contraseña }: LoginInput = req.body;
 
       // Buscar persona por correo (con contraseña)
-      const persona = await PersonaModel.findByEmailWithPassword(correo);
+      const persona = await PersonaModel.findByCorreoWithContraseña(correo);
       if (!persona) {
         throw new AppError('Credenciales inválidas', 401);
       }
@@ -87,7 +87,7 @@ export class PersonaController {
       const personaData: CreatePersonaInput = req.body;
 
       // Verificar si el correo ya existe
-      const existingPersona = await PersonaModel.emailExists(personaData.correo);
+      const existingPersona = await PersonaModel.CorreoExists(personaData.correo);
       if (existingPersona) {
         throw new AppError('Ya existe una persona con este correo', 409);
       }
@@ -212,8 +212,8 @@ export class PersonaController {
 
       // Si se está actualizando el correo, verificar que no exista en otra persona
       if (updateData.correo) {
-        const emailExists = await PersonaModel.emailExists(updateData.correo, personaId);
-        if (emailExists) {
+        const correoExists = await PersonaModel.CorreoExists(updateData.correo, personaId);
+        if (correoExists) {
           throw new AppError('Ya existe otra persona con este correo', 409);
         }
       }
@@ -378,7 +378,7 @@ export class PersonaController {
     try {
       const { correo, contraseña }: LoginInput = req.body;
 
-      const persona = await PersonaModel.findByEmailWithPassword(correo);
+      const persona = await PersonaModel.findByCorreoWithContraseña(correo);
       if (!persona || persona.contraseña !== contraseña) {
         res.status(401).json({
           success: false,

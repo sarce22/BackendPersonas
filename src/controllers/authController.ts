@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { IAPIResponse, ILoginResponse, CreateUserInput } from '../types';
-import { UserModel } from '../models/User';
+import { IAPIResponse, ILoginResponse, CreatePersonaInput } from '../types';
+import { PersonaModel } from '../models/Persona';
 import { AppError } from '../middleware/errorHandler';
 
 export class AuthController {
@@ -9,23 +9,23 @@ export class AuthController {
    */
   static async register(req: Request, res: Response<IAPIResponse>): Promise<void> {
     try {
-      const userData: CreateUserInput = req.body;
+      const userData: CreatePersonaInput = req.body;
 
-      // Verificar si el email ya existe
-      const existingUser = await UserModel.emailExists(userData.email);
+      // Verificar si el correo ya existe
+      const existingUser = await PersonaModel.CorreoExists(userData.correo);
       if (existingUser) {
-        throw new AppError('El email ya está registrado', 409);
+        throw new AppError('El correo ya está registrado', 409);
       }
 
       // Crear el usuario (contraseña en texto plano - solo para demo)
-      const newUser = await UserModel.create(userData);
+      const newUser = await PersonaModel.create(userData);
 
       res.status(201).json({
         success: true,
         message: 'Usuario registrado exitosamente',
         data: {
           id: newUser.id!,
-          email: newUser.email,
+          correo: newUser.correo,
           nombre: newUser.nombre
         }
       });
@@ -39,16 +39,16 @@ export class AuthController {
    */
   static async login(req: Request, res: Response<IAPIResponse<ILoginResponse>>): Promise<void> {
     try {
-      const { email, password } = req.body;
+      const { correo, contraseña } = req.body;
 
-      // Buscar usuario por email (con contraseña)
-      const user = await UserModel.findByEmailWithPassword(email);
+      // Buscar usuario por correo (con contraseña)
+      const user = await PersonaModel.findByCorreoWithContraseña(correo);
       if (!user) {
         throw new AppError('Credenciales inválidas', 401);
       }
 
       // Verificar contraseña (comparación directa - solo para demo)
-      if (user.password !== password) {
+      if (user.contraseña !== contraseña) {
         throw new AppError('Credenciales inválidas', 401);
       }
 
@@ -59,8 +59,10 @@ export class AuthController {
           message: 'Login exitoso',
           user: {
             id: user.id!,
-            email: user.email,
-            nombre: user.nombre
+            correo: user.correo,
+            nombre: user.nombre,
+            apellido: user.apellido,
+            rol: String(user.rol_id)
           }
         }
       });
@@ -74,7 +76,7 @@ export class AuthController {
    */
   static async getUsers(_req: Request, res: Response<IAPIResponse>): Promise<void> {
     try {
-      const users = await UserModel.findAll();
+      const users = await PersonaModel.findAll();
 
       res.status(200).json({
         success: true,
@@ -94,10 +96,10 @@ export class AuthController {
    */
   static async verify(req: Request, res: Response<IAPIResponse>): Promise<void> {
     try {
-      const { email, password } = req.body;
+      const { correo, contraseña } = req.body;
 
-      const user = await UserModel.findByEmailWithPassword(email);
-      if (!user || user.password !== password) {
+      const user = await PersonaModel.findByCorreoWithContraseña(correo);
+      if (!user || user.contraseña !== contraseña) {
         res.status(401).json({
           success: false,
           message: 'Credenciales inválidas'
@@ -110,7 +112,7 @@ export class AuthController {
         message: 'Credenciales válidas',
         data: {
           id: user.id,
-          email: user.email,
+          correo: user.correo,
           nombre: user.nombre
         }
       });

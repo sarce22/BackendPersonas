@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { IAPIResponse } from '../types';
+import authRoutes from './auth.routes';
 import personaRoutes from './personaRoutes';
 import roleRoutes from './roleRoutes';
 
@@ -25,7 +26,7 @@ router.get('/health', (_req: Request, res: Response<IAPIResponse>) => {
 
 /**
  * @route   GET /api
- * @desc    API información básica
+ * @desc    Información general de la API
  * @access  Public
  */
 router.get('/', (_req: Request, res: Response<IAPIResponse>) => {
@@ -36,23 +37,27 @@ router.get('/', (_req: Request, res: Response<IAPIResponse>) => {
       version: '1.0.0',
       description: 'API RESTful para gestión de personas con autenticación básica y sistema de roles',
       endpoints: {
+        auth: '/api/auth',
         personas: '/api/personas',
         roles: '/api/roles',
         health: '/api/health'
       },
+      authEndpoints: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login',
+        verify: 'POST /api/auth/verify',
+        users: 'GET /api/auth/users'
+      },
       personasEndpoints: {
-        // Autenticación
         register: 'POST /api/personas/register',
         login: 'POST /api/personas/login',
         verify: 'POST /api/personas/verify',
         users: 'GET /api/personas/users',
-        // CRUD
         create: 'POST /api/personas',
         getAll: 'GET /api/personas',
         getById: 'GET /api/personas/:id',
         update: 'PUT /api/personas/:id',
         delete: 'DELETE /api/personas/:id',
-        // Búsqueda y filtros
         search: 'GET /api/personas/search?term=',
         stats: 'GET /api/personas/stats',
         byRole: 'GET /api/personas/role/:role'
@@ -69,10 +74,22 @@ router.get('/', (_req: Request, res: Response<IAPIResponse>) => {
   });
 });
 
-// Rutas de personas (incluye autenticación y CRUD)
+/**
+ * @route   /api/auth/*
+ * @desc    Rutas de autenticación
+ */
+router.use('/auth', authRoutes);
+
+/**
+ * @route   /api/personas/*
+ * @desc    Rutas de gestión de personas
+ */
 router.use('/personas', personaRoutes);
 
-// Rutas de roles
+/**
+ * @route   /api/roles/*
+ * @desc    Rutas de gestión de roles
+ */
 router.use('/roles', roleRoutes);
 
 export default router;
