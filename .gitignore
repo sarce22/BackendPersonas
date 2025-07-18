@@ -1,0 +1,224 @@
+# ===========================
+# Node.js y npm
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ===========================
+# Variables de entorno
+# ===========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+
+# ===========================
+# TypeScript
+# ===========================
+dist/
+build/
+*.tsbuildinfo
+.tscache
+
+# ===========================
+# Logs
+# ===========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ===========================
+# Archivos temporales
+# ===========================
+.tmp/
+.temp/
+*.tmp
+*.temp
+
+# ===========================
+# Coverage de tests
+# ===========================
+coverage/
+*.lcov
+.nyc_output
+
+# ===========================
+# Sistema operativo
+# ===========================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================
+# IDEs y editores
+# ===========================
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# IntelliJ IDEA / WebStorm
+.idea/
+*.swp
+*.swo
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===========================
+# Base de datos local
+# ===========================
+*.sqlite
+*.sqlite3
+*.db
+
+# ===========================
+# Archivos de respaldo
+# ===========================
+*.bak
+*.backup
+*.old
+*.orig
+
+# ===========================
+# Runtime data
+# ===========================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ===========================
+# ESLint cache
+# ===========================
+.eslintcache
+
+# ===========================
+# Prettier cache
+# ===========================
+.prettierignore
+
+# ===========================
+# Next.js (si usas Next.js)
+# ===========================
+.next/
+out/
+
+# ===========================
+# Nuxt.js (si usas Nuxt.js)
+# ===========================
+.nuxt/
+dist/
+
+# ===========================
+# Gatsby (si usas Gatsby)
+# ===========================
+.cache/
+public
+
+# ===========================
+# Webpack
+# ===========================
+.webpack/
+
+# ===========================
+# Parcel
+# ===========================
+.parcel-cache
+
+# ===========================
+# Docker
+# ===========================
+Dockerfile.local
+docker-compose.override.yml
+
+# ===========================
+# SSL certificates
+# ===========================
+*.pem
+*.key
+*.crt
+*.csr
+
+# ===========================
+# Archivos específicos del proyecto
+# ===========================
+# Agregar aquí archivos específicos de tu proyecto
+
+# Archivos de configuración personal
+config.local.json
+
+# Uploads de usuarios (si tienes)
+uploads/
+public/uploads/
+
+# ===========================
+# Herramientas de monitoreo
+# ===========================
+.monitoring/
+.datadog/
+
+# ===========================
+# Terraform (si usas Infrastructure as Code)
+# ===========================
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# ===========================
+# Kubernetes secrets
+# ===========================
+secrets.yaml
+.kube/config
