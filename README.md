@@ -1,319 +1,164 @@
-# API de Gestión de Personas
+# 👥 API de Gestión de Personas
 
-API RESTful desarrollada con Node.js, TypeScript y MySQL que permite gestionar personas con un sistema CRUD completo. Implementa un patrón MVC limpio y modular.
+![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
+![Express](https://img.shields.io/badge/Express-4.18+-lightgrey.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+API RESTful desarrollada con **Node.js**, **TypeScript** y **MySQL** que permite gestionar personas con un sistema CRUD completo. Implementa un patrón **MVC** limpio y modular, perfecto para aprender backend development o como base para proyectos más complejos.
 
 ## 🚀 Características
 
-- **CRUD completo de personas** (Crear, Leer, Actualizar, Eliminar)
-- **Arquitectura MVC** bien estructurada
-- **Validación de datos** con Joi
-- **Seguridad** con Helmet, CORS y Rate Limiting
-- **Base de datos MySQL** con pool de conexiones
-- **TypeScript** para tipado fuerte
-- **Manejo de errores** centralizado
-- **Paginación y búsqueda** de personas
+- ✅ **CRUD completo de personas** (Crear, Leer, Actualizar, Eliminar)
+- ✅ **Arquitectura MVC** bien estructurada y escalable
+- ✅ **TypeScript** para tipado fuerte y mejor desarrollo
+- ✅ **Validación robusta** con Joi
+- ✅ **Base de datos MySQL** con pool de conexiones
+- ✅ **Búsqueda y filtrado** de personas
+- ✅ **Estadísticas** y reportes
+- ✅ **Manejo de errores** centralizado
+- ✅ **Seguridad** con Helmet, CORS y Rate Limiting
+- ✅ **Logs** de requests y errores
+- ✅ **Documentación completa** de endpoints
 
-## 📋 Requisitos Previos
+## 🛠️ Tecnologías Utilizadas
 
-- Node.js >= 16.0.0
-- MySQL >= 8.0
-- npm o yarn
+### **Backend Core**
+- **[Node.js](https://nodejs.org/)** - Runtime de JavaScript
+- **[TypeScript](https://www.typescriptlang.org/)** - Superset tipado de JavaScript
+- **[Express.js](https://expressjs.com/)** - Framework web minimalista
 
-## 🛠️ Instalación
+### **Base de Datos**
+- **[MySQL](https://www.mysql.com/)** - Sistema de gestión de base de datos
+- **[mysql2](https://github.com/sidorares/node-mysql2)** - Driver MySQL moderno con soporte para Promises
 
-1. **Clonar el repositorio**
-```bash
-git clone <tu-repositorio>
-cd personas-api
-```
+### **Validación y Seguridad**
+- **[Joi](https://joi.dev/)** - Validación de esquemas de datos
+- **[Helmet](https://helmetjs.github.io/)** - Headers de seguridad HTTP
+- **[CORS](https://github.com/expressjs/cors)** - Cross-Origin Resource Sharing
+- **[express-rate-limit](https://github.com/express-rate-limit/express-rate-limit)** - Rate limiting
 
-2. **Instalar dependencias**
-```bash
-npm install
-```
+### **Desarrollo**
+- **[nodemon](https://nodemon.io/)** - Auto-restart en desarrollo
+- **[ts-node](https://typestrong.org/ts-node/)** - Ejecutor de TypeScript
+- **[dotenv](https://github.com/motdotla/dotenv)** - Variables de entorno
 
-3. **Configurar variables de entorno**
-```bash
-cp .env.example .env
-```
-
-Edita el archivo `.env` con tus datos:
-```env
-NODE_ENV=development
-PORT=3000
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=tu_usuario_mysql
-DB_PASSWORD=tu_password_mysql
-DB_NAME=personas_db
-```
-
-4. **Configurar base de datos**
-
-Ejecuta el script SQL de inicialización:
-```bash
-mysql -u tu_usuario -p < database/init.sql
-```
-
-O ejecuta manualmente en MySQL:
-```sql
-CREATE DATABASE personas_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-5. **Compilar TypeScript**
-```bash
-npm run build
-```
-
-6. **Iniciar servidor**
-
-Desarrollo:
-```bash
-npm run dev
-```
-
-Producción:
-```bash
-npm start
-```
-
-## 📚 Endpoints de la API
-
-### Personas
-
-| Método | Endpoint | Descripción | Acceso |
-|--------|----------|-------------|--------|
-| POST | `/api/personas` | Crear persona | Público |
-| GET | `/api/personas` | Listar personas | Público |
-| GET | `/api/personas/:id` | Obtener persona | Público |
-| PUT | `/api/personas/:id` | Actualizar persona | Público |
-| DELETE | `/api/personas/:id` | Eliminar persona | Público |
-| GET | `/api/personas/search?term=` | Buscar personas | Público |
-| GET | `/api/personas/stats` | Estadísticas | Público |
-
-### Utilidad
-
-| Método | Endpoint | Descripción | Acceso |
-|--------|----------|-------------|--------|
-| GET | `/api/health` | Health check | Público |
-| GET | `/api` | Info de la API | Público |
-
-## 📝 Ejemplos de Uso
-
-### Crear Persona
-```bash
-curl -X POST http://localhost:3000/api/personas \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "email": "juan@ejemplo.com",
-    "telefono": "+57 300 123 4567",
-    "fecha_nacimiento": "1990-05-15",
-    "direccion": "Calle 123 #45-67"
-  }'
-```
-
-### Listar Personas con Paginación
-```bash
-curl -X GET "http://localhost:3000/api/personas?page=1&limit=10"
-```
-
-### Buscar Personas
-```bash
-curl -X GET "http://localhost:3000/api/personas/search?term=Juan"
-```
-
-### Obtener Persona por ID
-```bash
-curl -X GET http://localhost:3000/api/personas/1
-```
-
-### Actualizar Persona
-```bash
-curl -X PUT http://localhost:3000/api/personas/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "telefono": "+57 300 999 8888"
-  }'
-```
-
-### Eliminar Persona
-```bash
-curl -X DELETE http://localhost:3000/api/personas/1
-```
-
-## 🏗️ Estructura del Proyecto
+## 📂 Estructura del Proyecto
 
 ```
 src/
 ├── config/
-│   └── database.ts          # Configuración de MySQL
+│   └── database.ts          # Configuración de MySQL y pool de conexiones
 ├── controllers/
-│   └── personaController.ts # Controlador de personas
+│   └── personaController.ts # Lógica de negocio para personas
 ├── middleware/
-│   ├── validation.ts       # Middleware de validación
-│   └── errorHandler.ts     # Middleware de errores
+│   ├── validation.ts        # Middleware de validación con Joi
+│   └── errorHandler.ts      # Manejo centralizado de errores
 ├── models/
-│   └── Persona.ts          # Modelo de persona
+│   └── Persona.ts           # Modelo de datos para personas
 ├── routes/
-│   ├── personaRoutes.ts    # Rutas de personas
-│   └── index.ts            # Rutas principales
+│   ├── personaRoutes.ts     # Definición de rutas para personas
+│   └── index.ts             # Rutas principales de la API
 ├── types/
-│   └── index.ts            # Interfaces y tipos
+│   └── index.ts             # Interfaces y tipos TypeScript
 ├── utils/
-│   └── validations.ts      # Esquemas de validación
-└── index.ts                # Archivo principal
+│   └── validations.ts       # Esquemas de validación Joi
+└── index.ts                 # Punto de entrada de la aplicación
 ```
 
-## 🔧 Scripts Disponibles
+## 🚀 Instalación y Configuración
 
+### **Prerequisitos**
+- Node.js >= 16.0.0
+- MySQL >= 8.0
+- npm o yarn
+
+### **1. Clonar el repositorio**
 ```bash
-npm start          # Ejecutar en producción
-npm run dev        # Ejecutar en desarrollo
-npm run build      # Compilar TypeScript
-npm run build:watch # Compilar en modo watch
-npm run clean      # Limpiar carpeta dist
+git clone https://github.com/sarce22/BackendPersonas.git
+cd BackendPersonas
 ```
 
-## 🛡️ Seguridad
-
-- **Helmet** para headers de seguridad
-- **CORS** configurado
-- **Rate Limiting** para prevenir ataques
-- **Validación** de datos de entrada
-- **Sanitización** automática
-
-## 📊 Características Avanzadas
-
-- **Paginación** automática en listados
-- **Búsqueda** por nombre y apellido
-- **Estadísticas** de personas
-- **Validación** robusta con mensajes personalizados
-- **Manejo de errores** centralizado
-- **Logging** de requests
-- **Health checks**
-
-## 🚦 Estados de Respuesta
-
-La API siempre responde con el siguiente formato:
-
-```json
-{
-  "success": boolean,
-  "message": string,
-  "data": any,
-  "error": string (opcional)
-}
+### **2. Instalar dependencias**
+```bash
+npm install
 ```
 
-## 🔍 Variables de Entorno
-
-| Variable | Descripción | Valor por defecto |
-|----------|-------------|-------------------|
-| `NODE_ENV` | Entorno de ejecución | development |
-| `PORT` | Puerto del servidor | 3000 |
-| `DB_HOST` | Host de MySQL | localhost |
-| `DB_PORT` | Puerto de MySQL | 3306 |
-| `DB_USER` | Usuario de MySQL | root |
-| `DB_PASSWORD` | Contraseña de MySQL | - |
-| `DB_NAME` | Nombre de la base de datos | personas_db |
-
-## 📋 Estructura de Datos
-
-### Persona
-```json
-{
-  "id": 1,
-  "nombre": "Juan",
-  "apellido": "Pérez",
-  "email": "juan@ejemplo.com",
-  "telefono": "+57 300 123 4567",
-  "fecha_nacimiento": "1990-05-15",
-  "direccion": "Calle 123 #45-67",
-  "created_at": "2024-01-01T00:00:00.000Z",
-  "updated_at": "2024-01-01T00:00:00.000Z"
-}
+### **3. Configurar variables de entorno**
+```bash
+# Crear archivo de configuración
+cp .env.example .env
 ```
 
-## 🤝 Contribución
+Editar `.env` con tus datos:
+```env
+NODE_ENV=development
+PORT=3000
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+# Configuración de MySQL
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=tu_password_mysql
+DB_NAME=personas_db
 
-## 📄 Licencia
+# Configuración de CORS (opcional)
+CORS_ORIGIN=http://localhost:3000,http://localhost:3001
 
-Este proyecto está bajo la Licencia MIT - ver el archivo `LICENSE` para más detalles.
+# Rate limiting (opcional)
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+```
 
-## 👥 Autor
+### **4. Configurar base de datos**
+```bash
+# Crear base de datos
+mysql -u root -p -e "CREATE DATABASE personas_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
 
-Desarrollado con ❤️ por [Tu Nombre]
+### **5. Ejecutar en desarrollo**
+```bash
+npm run dev
+```
 
----
+### **6. Build para producción**
+```bash
+npm run build
+npm start
+```
 
-**¿Necesitas ayuda?** Abre un issue en el repositorio o contacta al equipo de desarrollo.
+## 📡 Endpoints de la API
 
-# 🧪 Guía Completa de Testing - API de Personas
+### **Base URL**: `http://localhost:3000/api`
 
-## 🔗 **Base URL**
-- **Local**: `http://localhost:3000`
-- **API Base**: `http://localhost:3000/api`
+### **🟢 Endpoints de Utilidad**
 
----
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/health` | Health check de la API |
+| `GET` | `/` | Información general de la API |
 
-## 📋 **1. ENDPOINTS DE UTILIDAD**
+### **👥 Endpoints de Personas**
 
-### 🟢 **Health Check**
-**GET** `/api/health`
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/personas` | Crear una nueva persona |
+| `GET` | `/personas` | Obtener todas las personas |
+| `GET` | `/personas/:id` | Obtener persona por ID |
+| `PUT` | `/personas/:id` | Actualizar persona |
+| `DELETE` | `/personas/:id` | Eliminar persona |
+| `GET` | `/personas/search?term=` | Buscar personas |
+| `GET` | `/personas/stats` | Estadísticas de personas |
 
-**cURL:**
+## 📝 Ejemplos de Uso
+
+### **Health Check**
 ```bash
 curl http://localhost:3000/api/health
 ```
 
-**Postman:**
-- **Método**: GET
-- **URL**: `http://localhost:3000/api/health`
-
-**Respuesta esperada:**
-```json
-{
-  "success": true,
-  "message": "API funcionando correctamente",
-  "data": {
-    "status": "OK",
-    "timestamp": "2024-01-01T12:00:00.000Z",
-    "version": "1.0.0",
-    "environment": "development"
-  }
-}
-```
-
----
-
-### 🟢 **Información de la API**
-**GET** `/api`
-
-**cURL:**
-```bash
-curl http://localhost:3000/api
-```
-
-**Postman:**
-- **Método**: GET
-- **URL**: `http://localhost:3000/api`
-
----
-
-## 👥 **2. CRUD DE PERSONAS**
-
-### 🟡 **Crear Persona**
-**POST** `/api/personas`
-
-**cURL:**
+### **Crear Persona**
 ```bash
 curl -X POST http://localhost:3000/api/personas \
   -H "Content-Type: application/json" \
@@ -327,52 +172,166 @@ curl -X POST http://localhost:3000/api/personas \
   }'
 ```
 
-**Postman:**
-- **Método**: POST
-- **URL**: `http://localhost:3000/api/personas`
-- **Headers**: 
-  - `Content-Type: application/json`
-- **Body (raw, JSON)**:
-```json
-{
-  "nombre": "Juan",
-  "apellido": "Pérez",
-  "email": "juan.perez@email.com",
-  "telefono": "+57 300 123 4567",
-  "fecha_nacimiento": "1990-05-15",
-  "direccion": "Calle 123 #45-67, Bogotá"
+### **Listar Personas**
+```bash
+curl http://localhost:3000/api/personas
+```
+
+### **Buscar Personas**
+```bash
+curl "http://localhost:3000/api/personas/search?term=Juan"
+```
+
+### **Actualizar Persona**
+```bash
+curl -X PUT http://localhost:3000/api/personas/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "telefono": "+57 300 999 8888"
+  }'
+```
+
+### **Eliminar Persona**
+```bash
+curl -X DELETE http://localhost:3000/api/personas/1
+```
+
+## 📊 Estructura de Datos
+
+### **Persona**
+```typescript
+interface IPersona {
+  id?: number;
+  nombre: string;          // Requerido
+  apellido: string;        // Requerido
+  email: string;           // Requerido, único
+  telefono?: string;       // Opcional
+  fecha_nacimiento?: Date; // Opcional
+  direccion?: string;      // Opcional
+  created_at?: Date;       // Auto-generado
+  updated_at?: Date;       // Auto-generado
 }
 ```
 
-**JSON Mínimo (solo campos requeridos):**
+### **Ejemplo de Respuesta**
 ```json
 {
-  "nombre": "Ana",
-  "apellido": "García",
-  "email": "ana.garcia@email.com"
+  "success": true,
+  "message": "Persona creada exitosamente",
+  "data": {
+    "id": 1,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan.perez@email.com",
+    "telefono": "+57 300 123 4567",
+    "fecha_nacimiento": "1990-05-15T00:00:00.000Z",
+    "direccion": "Calle 123 #45-67, Bogotá",
+    "created_at": "2024-01-15T10:30:00.000Z",
+    "updated_at": "2024-01-15T10:30:00.000Z"
+  }
 }
 ```
+
+## 🔧 Scripts Disponibles
+
+```bash
+npm run dev          # Ejecutar en modo desarrollo con hot-reload
+npm run build        # Compilar TypeScript a JavaScript
+npm start           # Ejecutar versión compilada (producción)
+npm run build:watch # Compilar en modo watch
+npm run clean       # Limpiar carpeta dist
+```
+
+## ⚙️ Variables de Entorno
+
+| Variable | Descripción | Valor por defecto |
+|----------|-------------|-------------------|
+| `NODE_ENV` | Entorno de ejecución | `development` |
+| `PORT` | Puerto del servidor | `3000` |
+| `DB_HOST` | Host de MySQL | `localhost` |
+| `DB_PORT` | Puerto de MySQL | `3306` |
+| `DB_USER` | Usuario de MySQL | `root` |
+| `DB_PASSWORD` | Contraseña de MySQL | - |
+| `DB_NAME` | Nombre de la base de datos | `personas_db` |
+| `CORS_ORIGIN` | Orígenes permitidos para CORS | - |
+| `RATE_LIMIT_WINDOW_MS` | Ventana de rate limiting (ms) | `900000` |
+| `RATE_LIMIT_MAX_REQUESTS` | Máximo requests por ventana | `100` |
+
+## 🛡️ Características de Seguridad
+
+- **Helmet** - Headers de seguridad HTTP
+- **CORS** - Control de orígenes cruzados
+- **Rate Limiting** - Protección contra ataques DDoS
+- **Validación de entrada** - Sanitización de datos con Joi
+- **Manejo de errores** - Sin exposición de información sensible
+
+## 📈 Funcionalidades Adicionales
+
+### **Búsqueda Inteligente**
+- Búsqueda por nombre o apellido
+- Coincidencias parciales
+- Resultados ordenados por relevancia
+
+### **Estadísticas**
+- Total de personas
+- Personas con teléfono
+- Personas con dirección
+- Personas con fecha de nacimiento
+- Porcentaje de perfiles completos
+
+### **Logging**
+- Logs de requests HTTP
+- Logs de errores con stack trace
+- Timestamps para debugging
+
+## 🧪 Testing
+
+### **Health Check**
+```bash
+curl http://localhost:3000/api/health
+```
+
+### **Probar todos los endpoints**
+Revisa la [Guía de Testing](docs/TESTING.md) para ejemplos completos de cURL y Postman.
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+### **Convenciones de Código**
+- Usar TypeScript para tipado fuerte
+- Seguir el patrón MVC
+- Documentar funciones públicas
+- Manejar errores apropiadamente
+- Escribir mensajes de commit descriptivos
+
+
+## 🐛 Problemas Conocidos
+
+- La paginación está temporalmente deshabilitada debido a problemas con parámetros de MySQL
+- Los logs se almacenan solo en consola (sin persistencia)
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 👨‍💻 Autor
+
+**Sebastian** - [GitHub](https://github.com/sarce22)
+
+## 🙏 Agradecimientos
+
+- [Express.js](https://expressjs.com/) por el excelente framework
+- [TypeScript](https://www.typescriptlang.org/) por hacer JavaScript más robusto
+- [Joi](https://joi.dev/) por la validación elegante
+- [mysql2](https://github.com/sidorares/node-mysql2) por el driver MySQL moderno
 
 ---
 
-### 🟢 **Listar Personas (con paginación)**
-**GET** `/api/personas`
+⭐ Si este proyecto te ayudó, dale una estrella en GitHub
 
-**cURL:**
-```bash
-# Listar todas (página 1, 10 por página)
-curl http://localhost:3000/api/personas
-
-# Con parámetros de paginación
-curl "http://localhost:3000/api/personas?page=1&limit=5"
-
-# Con búsqueda
-curl "http://localhost:3000/api/personas?search=Juan"
-```
-
-**Postman:**
-- **Método**: GET
-- **URL**: `http://localhost:3000/api/personas`
-- **Query Params** (opcionales):
-  - `page`: 1
-  - `limit`: 10
+📞 ¿Preguntas? Abre un [issue](https://github.com/sarce22/BackendPersonas/issues)
