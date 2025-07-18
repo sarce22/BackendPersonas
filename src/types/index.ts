@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-// Interface para Usuario (autenticación)
+// Interface para Usuario (login básico)
 export interface IUser {
   id?: number;
   email: string;
@@ -23,17 +23,12 @@ export interface IPersona {
   updated_at?: Date;
 }
 
-// Interface para JWT Payload
-export interface IJWTPayload {
-  userId: number;
-  email: string;
-  iat?: number;
-  exp?: number;
-}
-
-// Interface extendida de Request con usuario autenticado
-export interface IAuthRequest extends Request {
-  user?: IJWTPayload;
+// Interface para respuestas de API
+export interface IAPIResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: string;
 }
 
 // Interface para respuesta de login
@@ -44,15 +39,6 @@ export interface ILoginResponse {
     email: string;
     nombre: string;
   };
-  token: string;
-}
-
-// Interface para respuestas de API
-export interface IAPIResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
-  error?: string;
 }
 
 // Types para validaciones

@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { IAPIResponse } from '../types';
+import authRoutes from './authRoutes';
 import personaRoutes from './personaRoutes';
 
 const router = Router();
@@ -33,18 +34,24 @@ router.get('/', (_req: Request, res: Response<IAPIResponse>) => {
     message: 'API de Gestión de Personas',
     data: {
       version: '1.0.0',
-      description: 'API RESTful para gestión de personas',
+      description: 'API RESTful para gestión de personas con login básico',
       endpoints: {
+        auth: '/api/auth',
         personas: '/api/personas',
         health: '/api/health'
       },
-      documentation: {
-        swagger: '/api/docs', // Para futuras implementaciones
-        postman: '/api/postman' // Para futuras implementaciones
+      authEndpoints: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login',
+        verify: 'POST /api/auth/verify',
+        users: 'GET /api/auth/users'
       }
     }
   });
 });
+
+// Rutas de autenticación
+router.use('/auth', authRoutes);
 
 // Rutas de personas
 router.use('/personas', personaRoutes);

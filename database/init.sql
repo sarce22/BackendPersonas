@@ -4,6 +4,19 @@ CREATE DATABASE IF NOT EXISTS personas_db CHARACTER SET utf8mb4 COLLATE utf8mb4_
 -- Usar la base de datos
 USE personas_db;
 
+-- Tabla de usuarios para login básico
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_email (email),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de personas
 CREATE TABLE IF NOT EXISTS personas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,6 +35,13 @@ CREATE TABLE IF NOT EXISTS personas (
     INDEX idx_created_at (created_at),
     INDEX idx_nombre_apellido (nombre, apellido)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Datos de ejemplo para usuarios (contraseñas en texto plano para demo)
+INSERT INTO users (email, password, nombre) VALUES 
+('admin@test.com', 'admin123', 'Administrador'),
+('juan@test.com', '123456', 'Juan Pérez'),
+('maria@test.com', 'maria123', 'María González')
+ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
 
 -- Datos de ejemplo para personas
 INSERT INTO personas (nombre, apellido, email, telefono, fecha_nacimiento, direccion) VALUES 
@@ -81,6 +101,15 @@ DELIMITER ;
 DELIMITER //
 CREATE TRIGGER IF NOT EXISTS update_personas_timestamp 
     BEFORE UPDATE ON personas 
+    FOR EACH ROW 
+BEGIN
+    SET NEW.updated_at = CURRENT_TIMESTAMP;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER IF NOT EXISTS update_users_timestamp 
+    BEFORE UPDATE ON users 
     FOR EACH ROW 
 BEGIN
     SET NEW.updated_at = CURRENT_TIMESTAMP;

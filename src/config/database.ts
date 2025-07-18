@@ -20,10 +20,7 @@ export const pool = mysql.createPool({
   user: dbConfig.user,
   password: dbConfig.password,
   database: dbConfig.database,
-  port: dbConfig.port,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  port: dbConfig.port
 });
 
 // Función para probar la conexión
@@ -41,6 +38,18 @@ export const testConnection = async (): Promise<void> => {
 // Función para inicializar las tablas
 export const initializeTables = async (): Promise<void> => {
   try {
+    // Tabla de usuarios para login básico
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(100) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        nombre VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
     // Tabla de personas
     await pool.execute(`
       CREATE TABLE IF NOT EXISTS personas (
