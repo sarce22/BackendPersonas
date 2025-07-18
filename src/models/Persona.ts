@@ -7,12 +7,12 @@ export class PersonaModel {
    * Crear una nueva persona
    */
   static async create(personaData: CreatePersonaInput): Promise<IPersona> {
-    const { nombre, apellido, email, telefono, fecha_nacimiento, direccion } = personaData;
+    const { nombre, apellido, correo, contraseña, rol_id } = personaData;
     
     const [result] = await pool.execute<ResultSetHeader>(
-      `INSERT INTO personas (nombre, apellido, email, telefono, fecha_nacimiento, direccion) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [nombre, apellido, email, telefono || null, fecha_nacimiento || null, direccion || null]
+      `INSERT INTO personas (nombre, apellido, correo, contraseña, rol_id) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [nombre, apellido, correo, contraseña, rol_id]
     );
     
     const newPersona = await this.findById(result.insertId);
@@ -28,19 +28,25 @@ export class PersonaModel {
    */
   static async getAll(): Promise<IPersona[]> {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM personas ORDER BY created_at DESC'
+      `SELECT p.*, r.nombre as rol_nombre 
+       FROM personas p 
+       LEFT JOIN roles r ON p.rol_id = r.id 
+       ORDER BY p.created_at DESC`
     );
     return rows as IPersona[];
   }
 
   /**
-   * Obtener todas las personas
+   * Obtener todas las personas con roles
    */
   static async findAll(limit?: number, offset?: number): Promise<IPersona[]> {
     // Caso 1: Sin límite ni offset - usar query simple
     if (limit === undefined && offset === undefined) {
       const [rows] = await pool.query<RowDataPacket[]>(
-        'SELECT * FROM personas ORDER BY created_at DESC'
+        `SELECT p.*, r.nombre as rol_nombre 
+         FROM personas p 
+         LEFT JOIN roles r ON p.rol_id = r.id 
+         ORDER BY p.created_at DESC`
       );
       return rows as IPersona[];
     }
@@ -48,7 +54,10 @@ export class PersonaModel {
     // Caso 2: Solo con límite
     if (limit !== undefined && offset === undefined) {
       const [rows] = await pool.execute<RowDataPacket[]>(
-        'SELECT * FROM personas ORDER BY created_at DESC LIMIT ?',
+        `SELECT p.*, r.nombre as rol_nombre 
+         FROM personas p 
+         LEFT JOIN roles r ON p.rol_id = r.id 
+         ORDER BY p.created_at DESC LIMIT ?`,
         [limit]
       );
       return rows as IPersona[];
@@ -57,7 +66,10 @@ export class PersonaModel {
     // Caso 3: Con límite y offset
     if (limit !== undefined && offset !== undefined) {
       const [rows] = await pool.execute<RowDataPacket[]>(
-        'SELECT * FROM personas ORDER BY created_at DESC LIMIT ? OFFSET ?',
+        `SELECT p.*, r.nombre as rol_nombre 
+         FROM personas p 
+         LEFT JOIN roles r ON p.rol_id = r.id 
+         ORDER BY p.created_at DESC LIMIT ? OFFSET ?`,
         [limit, offset]
       );
       return rows as IPersona[];
@@ -65,7 +77,10 @@ export class PersonaModel {
     
     // Caso por defecto
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM personas ORDER BY created_at DESC'
+      `SELECT p.*, r.nombre as rol_nombre 
+       FROM personas p 
+       LEFT JOIN roles r ON p.rol_id = r.id 
+       ORDER BY p.created_at DESC`
     );
     return rows as IPersona[];
   }
@@ -75,7 +90,11 @@ export class PersonaModel {
    */
   static async findById(id: number): Promise<IPersona | null> {
     const [rows] = await pool.execute<RowDataPacket[]>(
-      'SELECT * FROM personas WHERE id = ?',
+      `SELECT p.id, p.nombre, p.apellido, p.correo, p.rol_id, 
+              p.created_at, p.updated_at, r.nombre as rol_nombre
+       FROM personas p 
+       LEFT JOIN roles r ON p.rol_id = r.id 
+       WHERE p.id = ?`,
       [id]
     );
     
@@ -85,12 +104,33 @@ export class PersonaModel {
   }
 
   /**
-   * Buscar persona por email
+   * Buscar persona por correo (sin contraseña)
    */
-  static async findByEmail(email: string): Promise<IPersona | null> {
+  static async findByEmail(correo: string): Promise<IPersona | null> {
     const [rows] = await pool.execute<RowDataPacket[]>(
-      'SELECT * FROM personas WHERE email = ?',
-      [email]
+      `SELECT p.id, p.nombre, p.apellido, p.correo, p.rol_id, 
+              p.created_at, p.updated_at, r.nombre as rol_nombre
+       FROM personas p 
+       LEFT JOIN roles r ON p.rol_id = r.id 
+       WHERE p.correo = ?`,
+      [correo]
+    );
+    
+    if (rows.length === 0) return null;
+    
+    return rows[0] as IPersona;
+  }
+
+  /**
+   * Buscar persona por correo CON contraseña (para login)
+   */
+  static async findByEmailWithPassword(correo: string): Promise<IPersona | null> {
+    const [rows] = await pool.execute<RowDataPacket[]>(
+      `SELECT p.*, r.nombre as rol_nombre
+       FROM personas p 
+       LEFT JOIN roles r ON p.rol_id = r.id 
+       WHERE p.correo = ?`,
+      [correo]
     );
     
     if (rows.length === 0) return null;
@@ -103,9 +143,12 @@ export class PersonaModel {
    */
   static async searchByName(searchTerm: string): Promise<IPersona[]> {
     const [rows] = await pool.execute<RowDataPacket[]>(
-      `SELECT * FROM personas 
-       WHERE nombre LIKE ? OR apellido LIKE ? 
-       ORDER BY nombre, apellido`,
+      `SELECT p.id, p.nombre, p.apellido, p.correo, p.rol_id, 
+              p.created_at, p.updated_at, r.nombre as rol_nombre
+       FROM personas p 
+       LEFT JOIN roles r ON p.rol_id = r.id 
+       WHERE p.nombre LIKE ? OR p.apellido LIKE ? 
+       ORDER BY p.nombre, p.apellido`,
       [`%${searchTerm}%`, `%${searchTerm}%`]
     );
     
@@ -116,7 +159,7 @@ export class PersonaModel {
    * Actualizar persona
    */
   static async update(id: number, personaData: UpdatePersonaInput): Promise<IPersona | null> {
-    const { nombre, apellido, email, telefono, fecha_nacimiento, direccion } = personaData;
+    const { nombre, apellido, correo, contraseña, rol_id } = personaData;
     const updates: string[] = [];
     const values: any[] = [];
     
@@ -130,24 +173,19 @@ export class PersonaModel {
       values.push(apellido);
     }
     
-    if (email !== undefined) {
-      updates.push('email = ?');
-      values.push(email);
+    if (correo !== undefined) {
+      updates.push('correo = ?');
+      values.push(correo);
     }
     
-    if (telefono !== undefined) {
-      updates.push('telefono = ?');
-      values.push(telefono || null);
+    if (contraseña !== undefined) {
+      updates.push('contraseña = ?');
+      values.push(contraseña);
     }
     
-    if (fecha_nacimiento !== undefined) {
-      updates.push('fecha_nacimiento = ?');
-      values.push(fecha_nacimiento || null);
-    }
-    
-    if (direccion !== undefined) {
-      updates.push('direccion = ?');
-      values.push(direccion || null);
+    if (rol_id !== undefined) {
+      updates.push('rol_id = ?');
+      values.push(rol_id);
     }
     
     if (updates.length === 0) {
@@ -181,11 +219,11 @@ export class PersonaModel {
   }
 
   /**
-   * Verificar si existe una persona con el email
+   * Verificar si existe una persona con el correo
    */
-  static async emailExists(email: string, excludeId?: number): Promise<boolean> {
-    let query = 'SELECT COUNT(*) as count FROM personas WHERE email = ?';
-    const params: any[] = [email];
+  static async emailExists(correo: string, excludeId?: number): Promise<boolean> {
+    let query = 'SELECT COUNT(*) as count FROM personas WHERE correo = ?';
+    const params: any[] = [correo];
     
     if (excludeId) {
       query += ' AND id != ?';
@@ -239,5 +277,22 @@ export class PersonaModel {
       hasNext: validPage < totalPages,
       hasPrev: validPage > 1
     };
+  }
+
+  /**
+   * Obtener personas por rol
+   */
+  static async findByRole(roleName: string): Promise<IPersona[]> {
+    const [rows] = await pool.execute<RowDataPacket[]>(
+      `SELECT p.id, p.nombre, p.apellido, p.correo, p.rol_id, 
+              p.created_at, p.updated_at, r.nombre as rol_nombre
+       FROM personas p 
+       INNER JOIN roles r ON p.rol_id = r.id 
+       WHERE r.nombre = ?
+       ORDER BY p.nombre, p.apellido`,
+      [roleName]
+    );
+    
+    return rows as IPersona[];
   }
 }

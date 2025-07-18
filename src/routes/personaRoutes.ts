@@ -5,13 +5,14 @@ import { asyncHandler } from '../middleware/errorHandler';
 import { 
   createPersonaSchema, 
   updatePersonaSchema, 
-  idParamSchema 
+  idParamSchema,
+  registerSchema,
+  loginSchema,
+  roleParamSchema
 } from '../utils/validations';
 import Joi from 'joi';
 
 const router = Router();
-
-
 
 const searchSchema = Joi.object({
   term: Joi.string().min(1).required().messages({
@@ -20,26 +21,52 @@ const searchSchema = Joi.object({
   })
 });
 
+// ============= RUTAS DE AUTENTICACIÓN =============
+
 /**
- * @route   POST /api/personas
- * @desc    Crear una nueva persona
+ * @route   POST /api/personas/register
+ * @desc    Registrar nueva persona/usuario
  * @access  Public
  */
 router.post(
-  '/',
-  validateBody(createPersonaSchema),
-  asyncHandler(PersonaController.create)
+  '/register',
+  validateBody(registerSchema),
+  asyncHandler(PersonaController.register)
 );
 
 /**
- * @route   GET /api/personas
- * @desc    Obtener todas las personas con paginación y búsqueda
+ * @route   POST /api/personas/login
+ * @desc    Iniciar sesión
+ * @access  Public
+ */
+router.post(
+  '/login',
+  validateBody(loginSchema),
+  asyncHandler(PersonaController.login)
+);
+
+/**
+ * @route   POST /api/personas/verify
+ * @desc    Verificar credenciales (endpoint de prueba)
+ * @access  Public
+ */
+router.post(
+  '/verify',
+  validateBody(loginSchema),
+  asyncHandler(PersonaController.verify)
+);
+
+/**
+ * @route   GET /api/personas/users
+ * @desc    Listar usuarios registrados
  * @access  Public
  */
 router.get(
-  '/',
-  asyncHandler(PersonaController.getAll)
+  '/users',
+  asyncHandler(PersonaController.getUsers)
 );
+
+// ============= RUTAS DE BÚSQUEDA Y ESTADÍSTICAS =============
 
 /**
  * @route   GET /api/personas/search
@@ -60,6 +87,40 @@ router.get(
 router.get(
   '/stats',
   asyncHandler(PersonaController.getStats)
+);
+
+/**
+ * @route   GET /api/personas/role/:role
+ * @desc    Obtener personas por rol
+ * @access  Public
+ */
+router.get(
+  '/role/:role',
+  validateParams(roleParamSchema),
+  asyncHandler(PersonaController.getByRole)
+);
+
+// ============= RUTAS CRUD DE PERSONAS =============
+
+/**
+ * @route   POST /api/personas
+ * @desc    Crear una nueva persona
+ * @access  Public
+ */
+router.post(
+  '/',
+  validateBody(createPersonaSchema),
+  asyncHandler(PersonaController.create)
+);
+
+/**
+ * @route   GET /api/personas
+ * @desc    Obtener todas las personas con paginación y búsqueda
+ * @access  Public
+ */
+router.get(
+  '/',
+  asyncHandler(PersonaController.getAll)
 );
 
 /**
