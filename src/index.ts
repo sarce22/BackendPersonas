@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { testConnection, initializeTables } from './config/database';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -32,26 +31,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutos
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // máximo 100 requests por ventana
-  message: {
-    success: false,
-    message: 'Demasiadas peticiones desde esta IP, inténtalo de nuevo más tarde',
-    error: 'Rate limit exceeded'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (_req, res) => {
-    res.status(429).json({
-      success: false,
-      message: 'Demasiadas peticiones desde esta IP, inténtalo de nuevo más tarde',
-      error: 'Rate limit exceeded'
-    });
-  }
-});
-app.use('/api', limiter);
+
 
 /**
  * Configuración de middlewares de parsing
